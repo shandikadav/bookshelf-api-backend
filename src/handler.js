@@ -80,4 +80,12 @@ const addBookHandler = (request, h) => {
   return response;
 };
 
-module.exports = { addBookHandler };
+// ShowBookHandler
+const getAllBookHandler = () => ({
+  status: "success",
+  data: {
+    books,
+  },
+});
+
+module.exports = { addBookHandler, getAllBookHandler };
