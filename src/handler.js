@@ -216,9 +216,9 @@ const editBooksByIdHandler = (request, h) => {
 
 // deleteBooksByIdHandler
 const deleteBooksByIdHandler = (request, h) => {
-  const { id } = request.params;
+  const { bookId } = request.params;
 
-  const index = books.findIndex((book) => book.id === id);
+  const index = books.findIndex((book) => book.id === bookId);
 
   if (index !== -1) {
     books.splice(index, 1);
@@ -230,15 +230,14 @@ const deleteBooksByIdHandler = (request, h) => {
 
     response.code(200);
     return response;
-  } else {
-    const response = h.response({
-      status: "fail",
-      message: "Buku gagal dihapus. Id tidak ditemukan",
-    });
-
-    response.code(404);
-    return response;
   }
+
+  const response = h.response({
+    status: "fail",
+    message: "Buku gagal dihapus. Id tidak ditemukan",
+  });
+  response.code(404);
+  return response;
 };
 
 module.exports = {
