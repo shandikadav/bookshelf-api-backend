@@ -24,7 +24,7 @@ const addBookHandler = (request, h) => {
     return response;
   }
 
-  // Validasi jika nama tidak diisi
+  // validate if name is empty
   if (!name) {
     const response = h.response({
       status: "fail",
@@ -37,7 +37,7 @@ const addBookHandler = (request, h) => {
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
-  const finished = pageCount === readPage; // Set finished berdasarkan kondisi
+  const finished = pageCount === readPage;
 
   const newBook = {
     id,
@@ -54,7 +54,7 @@ const addBookHandler = (request, h) => {
     updatedAt,
   };
 
-  // Tambahkan buku baru ke array books
+  // push newBook to books array
   books.push(newBook);
 
   const isSuccess = books.filter((book) => book.id === id).length > 0;
@@ -71,7 +71,6 @@ const addBookHandler = (request, h) => {
     return response;
   }
 
-  // Default error jika buku gagal disimpan
   const response = h.response({
     status: "error",
     message: "Buku gagal ditambahkan",
@@ -82,16 +81,39 @@ const addBookHandler = (request, h) => {
 
 // getAllBookHandler
 const getAllBookHandler = (request, h) => {
-  const filteredBooks = books.map((books) => ({
-    id: books.id,
-    name: books.name,
-    publisher: books.publisher,
-  }));
+  const { name, reading, finished } = request.query;
+
+  let filteredBooks = books;
+
+  // filter query ?name
+  if (name !== undefined) {
+    filteredBooks = filteredBooks.filter((book) =>
+      book.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  // filter query ?reading
+  if (reading !== undefined) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.reading === (reading === "1")
+    );
+  }
+
+  // filter query ?finished
+  if (finished !== undefined) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.finished === (finished === "1")
+    );
+  }
 
   const response = h.response({
     status: "success",
     data: {
-      books: filteredBooks,
+      books: filteredBooks.map((books) => ({
+        id: books.id,
+        name: books.name,
+        publisher: books.publisher,
+      })),
     },
   });
   response.code(200);
@@ -121,7 +143,7 @@ const getAllBookByIdHandler = (request, h) => {
   return response;
 };
 
-// UpdateBookByIdHandler
+// editBooksByIdHandler
 const editBooksByIdHandler = (request, h) => {
   const { id } = request.params;
 
@@ -192,7 +214,7 @@ const editBooksByIdHandler = (request, h) => {
   }
 };
 
-// DeleteBookByIdHandler
+// deleteBooksByIdHandler
 const deleteBooksByIdHandler = (request, h) => {
   const { id } = request.params;
 
